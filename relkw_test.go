@@ -1,9 +1,11 @@
 package relkw
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestMain(t *testing.T) {
-	GetRelKw("advertising")
+	mapKw, _ := GetRelKw("facebook ads")
+	fmt.Printf("len mapKw: %v\n", len(mapKw))
 }

@@ -10,11 +10,12 @@ import (
 )
 
 // GetRelKw to get a array of relevent keywords
-func GetRelKw(keyword string) (mapKw map[string]bool, err error) {
+func GetRelKw(keyword string) (mapKw []string, err error) {
+	keyword = strings.ReplaceAll(keyword, " ", "+")
 	mapKeywords := make(map[string]bool)
 	chkeywords := make(chan []string)
 	chFinished := make(chan bool)
-	// -----------------------------google----------------------------
+	// ----------------------------- google ----------------------------
 	for x := 0; x <= 25; x++ {
 		go func(x int, chkeywords chan []string, chFinshed chan bool) {
 			resSlice, err := getGoogleJSON("http://suggestqueries.google.com/complete/search?client=chrome&hl=kr&q=" + keyword + "+" + string(rune('a'+x)))
@@ -39,7 +40,7 @@ func GetRelKw(keyword string) (mapKw map[string]bool, err error) {
 			x++
 		}
 	}
-	// -----------------------------bing----------------------------
+	// ----------------------------- bing ----------------------------
 	for x := 0; x <= 25; x++ {
 		go func(x int, chkeywords chan []string, chFinshed chan bool) {
 			resSlice, err := getBingJSON("https://www.bing.com/AS/Suggestions?pt=page.home&cp=1&cvid=" +
@@ -64,9 +65,13 @@ func GetRelKw(keyword string) (mapKw map[string]bool, err error) {
 			x++
 		}
 	}
-	return mapKeywords, nil
+	for keyword := range mapKeywords {
+		mapKw = append(mapKw, keyword)
+	}
+	return mapKw, nil
 }
 
+// ----------------------------- scrape ----------------------------
 func getGoogleJSON(url string) (resSlice []string, err error) {
 	r, err := http.Get(url)
 	if err != nil {
@@ -104,6 +109,7 @@ func getBingJSON(url string) (resSlice []string, err error) {
 	return resSlice, nil
 }
 
+// ----------------------------- additional ----------------------------
 func randomStrFromCharset(length int, charset string) string {
 	var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 	b := make([]byte, length)
