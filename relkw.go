@@ -10,7 +10,7 @@ import (
 )
 
 // GetRelKw to get a array of relevent keywords
-func GetRelKw(keyword string) (mapKw []string, err error) {
+func GetRelKw(keyword string) (sliceKw []string, err error) {
 	keyword = strings.ReplaceAll(keyword, " ", "+")
 	mapKeywords := make(map[string]bool)
 	chkeywords := make(chan []string)
@@ -66,9 +66,37 @@ func GetRelKw(keyword string) (mapKw []string, err error) {
 		}
 	}
 	for keyword := range mapKeywords {
-		mapKw = append(mapKw, keyword)
+		sliceKw = append(sliceKw, keyword)
 	}
-	return mapKw, nil
+	return sliceKw, nil
+}
+
+// Contact of a youtuber
+type Contact struct {
+	youtube       string
+	title         string
+	facebook      string
+	facebookGroup string
+	twitter       string
+	instagram     string
+	email         string
+}
+
+// GetRelYt to get all info from youtube
+func GetRelYt(sliceKw []string) (contacts []Contact, err error) {
+	//
+	for _, keyword := range sliceKw {
+		r, err := http.Get("http://localhost:3000/search?search=" + strings.ReplaceAll(keyword, " ", "+") + "&getallpage=true")
+		if err != nil {
+			return nil, err
+		}
+		defer r.Body.Close()
+		s, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return nil, err
+		}
+		// err = json.Unmarshal(s, &t)
+	}
 }
 
 // ----------------------------- scrape ----------------------------
