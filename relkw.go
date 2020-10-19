@@ -73,7 +73,7 @@ func GetRelKw(keyword string) (sliceKw []string, err error) {
 
 // Contact of a youtuber
 type Contact struct {
-	youtube       string
+	chan_url      string
 	title         string
 	facebook      string
 	facebookGroup string
@@ -86,17 +86,17 @@ type Contact struct {
 func GetRelYt(sliceKw []string) (contacts []Contact, err error) {
 	//
 	for _, keyword := range sliceKw {
-		r, err := http.Get("http://localhost:3000/search?search=" + strings.ReplaceAll(keyword, " ", "+") + "&getallpage=true")
+		r, err := http.Get("http://http://ec2-54-161-234-228.compute-1.amazonaws.com:3000/search?search=" + strings.ReplaceAll(keyword, " ", "+") + "&getallpage=true")
 		if err != nil {
 			return nil, err
 		}
 		defer r.Body.Close()
-		s, err := ioutil.ReadAll(r.Body)
+		_, err = ioutil.ReadAll(r.Body)
 		if err != nil {
 			return nil, err
 		}
-		// err = json.Unmarshal(s, &t)
 	}
+	return nil, nil
 }
 
 // ----------------------------- scrape ----------------------------
